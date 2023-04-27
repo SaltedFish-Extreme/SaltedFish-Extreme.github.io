@@ -201,13 +201,16 @@ mark .md-meta { color: rgb(0, 0, 0); }
 .md-inline-math-container mjx-container { zoom: 0.95; }
 
 
-@font-face{
-    font-family: 'JetBrains Mono';
-    src: local('JetBrains Mono'),
-    url('file:///C://Users//zhong//AppData//Roaming//Typora/themes/drake/JetBrainsMono-BoldItalic.woff2') format('woff2');
-    font-display: swap;
-    font-weight: bold;
-    font-style: italic;
+/*快速自定义配置*/
+:root {
+    --monospace: "JetBrains Mono", "Fira Code", "Cascadia Code", Menlo, "Ubuntu Mono", Consolas, HYZhengYuan; /*代码字体*/
+    --text-font: var(--monospace); /*正文字体*/
+    --title-font: var(--monospace); /*标题字体*/
+    --latex-font: var(--monospace); /*LaTeX字体(不含英语)*/
+    --text-line-height: 1.6; /*正文行间距*/
+    --code-line-height: 1.6; /*代码块行间距*/
+    --p-spacing: 0.8rem; /*段间距*/
+    --text-size: 12px;
 }/*
  * Copyright (C) 2018 Drake, Inc.
  *
@@ -229,10 +232,6 @@ mark .md-meta { color: rgb(0, 0, 0); }
 @include-when-export url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 :root {
-    --monospace: "JetBrains Mono", "Fira Code", "Cascadia Code", Menlo, "Ubuntu Mono", Consolas; /*code font*/
-    --text-font: var(--monospace); /*default font*/
-    --title-font: var(--monospace); /*title font*/
-
     --text-color: #b3bec4;
     --bg-color: #283237;
     --control-text-color: var(--text-color);
@@ -282,7 +281,7 @@ mark .md-meta { color: rgb(0, 0, 0); }
 }
 
 html {
-    font-size: 12px;
+    font-size: var(--text-size);
 }
 
 body {
@@ -296,6 +295,10 @@ body {
     overflow-x: hidden;
 }
 
+p {
+    line-height: var(--text-line-height);
+}
+
 /*code block*/
 .md-fences {
     font-size: 1rem;
@@ -305,9 +308,60 @@ body {
     background-color: var(--code-block-bg-color);
     color: var(--code-block-color);
     border: none;
+    line-height: var(--code-line-height);
+}
+
+/*inline latex*/
+.MathJax {
+    font-size: 120% !important;
+}
+.MathJax text, .MathJax use {
+    font-family: var(--latex-font);
+}
+/*math-block latex*/
+.md-math-block .MathJax {
+    font-size: 130% !important;
 }
 
 /*mermaid*/
+[id^=mermaidChart] .cluster rect {
+    fill: var(--table-n2-bg-color) !important;
+    stroke: var(--table-border-color) !important;
+}
+[id^=mermaidChart] .clusters span.nodeLabel {
+    color: var(--text-color) !important;
+    line-height: 1.8rem;
+}
+[mermaid-type="journey"] line {
+    stroke: #7a7a7a !important;
+}
+[mermaid-type="journey"] .label {
+    color: #333 !important;
+}
+[id^=mermaidChart] .relationshipLabelBox {
+    fill: var(--bg-color) !important;
+    opacity: 1 !important;
+    background-color: var(--bg-color) !important;
+}
+[id^=mermaidChart] .legend {
+    fill: var(--text-color) !important;
+}
+[id^=mermaidChart] g.label {
+    font-size: 1rem !important;
+}
+[id^=mermaidChart] line.divider {
+    stroke: var(--table-border-color) !important;
+}
+[id^=mermaidChart] span.nodeLabel {
+    color: var(--code-block-color) !important;
+    line-height: 1.8rem;
+}
+tspan {
+    color: var(--text-color)
+}
+[id^=mermaidChart] .entityLabel {
+    fill: var(--code-block-color) !important;
+}
 [id^=mermaidChart] {
     fill: var(--text-color) !important;
 }
@@ -320,7 +374,7 @@ body {
     font-family: var(--text-font) !important;
     font-size: 1rem !important;
 }
-.md-diagram-panel-preview .actor { /*方块*/
+.md-diagram-panel-preview .actor, .md-diagram-panel-preview .entityBox { /*方块*/
     stroke: var(--table-border-color) !important;
     fill: var(--code-block-bg-color) !important;
 }
@@ -378,7 +432,8 @@ pre.md-fences-advanced.md-focus .md-fences-adv-panel {
     fill: var(--bg-color) !important;
 }
 .md-diagram-panel-preview .edgeLabel span { /*条件文字*/
-    color: var(--text-color);
+    color: var(--text-color) !important;
+    background: var(--bg-color) !important;
 }
 .md-diagram-panel-preview .node rect,
 .md-diagram-panel-preview .node circle,
@@ -389,7 +444,7 @@ pre.md-fences-advanced.md-focus .md-fences-adv-panel {
     fill: var(--code-block-bg-color) !important;
 }
 #write .md-diagram-panel .md-diagram-panel-preview div { /*形状内文字*/
-    color: var(--code-block-color) !important;
+    color: var(--code-block-color);
     font-family: var(--text-font) !important;
     font-size: 1rem !important;
 }
@@ -540,10 +595,9 @@ h1 {
     margin-top: 0;
 }
 
-h2 .md-plain {
-    padding-bottom: .3rem;
-    border-bottom: .2rem solid var(--h2-underline-color);
-    line-height: 3rem;
+h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
 }
 
 .on-focus-mode h2.md-end-block.md-heading:not(.md-focus):not(.md-focus-container):after {
@@ -605,18 +659,16 @@ h6 code {
     font-size: inherit !important;
 }
 
-p,
-blockquote,
-ul,
-ol,
-dl,
-table {
-    margin: 0.8em 0;
+p, blockquote, ul, ol, dl, table {
+    margin: var(--p-spacing) 0;
 }
 
 li > ol,
 li > ul {
     margin: 0 0;
+}
+li {
+    margin: 0.5em 0;
 }
 
 hr {
@@ -689,8 +741,11 @@ ol:last-child {
     margin-bottom: 0;
 }
 
-table {
-    padding: 0;
+.ty-table-edit {
+    margin-top: -1rem !important;
+}
+#write table {
+    margin-top: 1rem;
     word-break: initial;
     background-color: var(--table-bg-color);
 }
@@ -755,7 +810,6 @@ kbd {
     font-size: .95rem;
     padding: .3em .4em;
     border-radius: .4em;
-    vertical-align: top;
     box-shadow: .1em .1em .2em rgba(0, 0, 0, 0.3);
 }
 
@@ -955,7 +1009,7 @@ footer {
 .file-node-open-state {
     margin-right: .5rem;
 }
-.file-node-icon{
+.file-node-icon {
     margin-right: .5rem;
 }
 
@@ -1109,7 +1163,6 @@ div.code-tooltip-content {
     width: 1.6rem;
     margin-left: -2em;
 }
-
 #write .ul-list li.md-task-list-item.task-list-not-done::before {
     content: "";
     background: var(--checkbox-unchecked) 0 0 no-repeat;
@@ -1119,6 +1172,9 @@ div.code-tooltip-content {
     height: 1.6rem;
     width: 1.6rem;
     margin-left: -2em;
+}
+.task-list-item p {
+    line-height: 1.6rem;
 }
 
 /*insert table*/
@@ -1264,13 +1320,13 @@ a.ty-link {
     color: #546E7A;
 }
 .cm-s-inner .CodeMirror-line::selection,
-.cm-s-inner .CodeMirror-line>span::selection,
-.cm-s-inner .CodeMirror-line>span>span::selection {
+.cm-s-inner .CodeMirror-line > span::selection,
+.cm-s-inner .CodeMirror-line > span > span::selection {
     background: rgba(128, 203, 196, 0.2);
 }
 .cm-s-inner .CodeMirror-line::-moz-selection,
-.cm-s-inner .CodeMirror-line>span::-moz-selection,
-.cm-s-inner .CodeMirror-line>span>span::-moz-selection {
+.cm-s-inner .CodeMirror-line > span::-moz-selection,
+.cm-s-inner .CodeMirror-line > span > span::-moz-selection {
     background: rgba(128, 203, 196, 0.2);
 }
 .cm-s-inner .cm-keyword {
@@ -1330,8 +1386,7 @@ a.ty-link {
     color: #DECB6B;
 }
 .cm-s-inner .cm-error {
-    color: rgba(255, 255, 255, 1.0);
-    background-color: #FF5370;
+    color: #FF5370;
 }
 .cm-s-inner .CodeMirror-matchingbracket {
     text-decoration: underline;
@@ -1352,11 +1407,14 @@ a.ty-link {
 .cm-s-inner div.CodeMirror-cursor {
     border-left: 1px solid var(--code-block-color);
 }
+.cm-s-inner .cm-header, .cm-s-inner.cm-header {
+    color: #FFD760;
+}
 
 
-</style><title>菜鸡Android开发攻城狮-咸鱼至尊</title>
+</style><title>垃級Android开发工程師-劉強東</title>
 </head>
 <body class='typora-export os-windows'><div class='typora-export-content'>
-<div id='write'  class=''><h1 id='菜鸡android开发攻城狮'><span>菜鸡Android开发攻城狮</span></h1><h2 id='介绍'><span>介绍</span></h2><figure><table><thead><tr><th><span>姓名</span></th><th><span>咸鱼至尊</span></th></tr></thead><tbody><tr><td><span>年龄</span></td><td><span>22</span></td></tr><tr><td><span>工作年限</span></td><td><span>1</span></td></tr><tr><td><span>婚姻状况</span></td><td><span>单身</span></td></tr><tr><td><span>所在城市</span></td><td><span>山东青岛</span></td></tr><tr><td><span>期望薪资</span></td><td><em><span>1-1.2W</span></em></td></tr><tr><td><span>擅长领域</span></td><td><strong><span>吹逼/斗图</span></strong><span>  </span><strong><span>写BUG/找BUG</span></strong><span>  </span><strong><span>Ctrl+C/Ctrl+V</span></strong></td></tr><tr><td><span>资产情况</span></td><td><em><strong><span>三房一车(总资产1KW)</span></strong></em></td></tr></tbody></table></figure><p>&nbsp;</p><h2 id='教育'><span>教育</span></h2><p><span>2018 - 2020    潍坊职业学院    大专</span></p><p>&nbsp;</p><h2 id='技能点'><span>技能点</span></h2><ul><li><span>熟悉Java/Kotlin</span></li><li><span>熟练使用Android Studio</span></li><li><span>熟悉MVP/MVVM代码结构</span></li><li><span>熟悉三方库/UI组件</span></li><li><span>擅长UI组件的复制粘贴</span></li><li><span>擅长代码的复制粘贴/东拼西凑</span></li><li><span>熟练使用Windows10</span></li><li><span>长期写辣鸡代码以及冗余注释</span></li></ul><p>&nbsp;</p><h2 id='成就'><span>成就</span></h2><p><span>中级CV攻城狮</span></p><p><span>吹水龙王🐉</span></p><p>&nbsp;</p><h2 id='名言'><span>名言</span></h2><p><span>天下辣鸡代码共一石，我独占八斗</span></p><p><span>不写注释的不叫程序猿，叫码农</span></p><p><span>空谈误国，实干兴邦</span></p><p><span>屁话少说，放🐎过来</span></p><p>&nbsp;</p><h2 id='公司'><span>公司</span></h2><figure><table><thead><tr><th><span>时间</span></th><th><span>公司名称</span></th><th><span>职位</span></th></tr></thead><tbody><tr><td><span>2021.08 - 2021.10</span></td><td><span>青岛通软网络科技有限公司</span></td><td><span>安卓开发</span></td></tr><tr><td><span>2020.10 - 2021.07</span></td><td><span>康吉诺(青岛)工业设备研究院</span></td><td><span>安卓开发</span></td></tr></tbody></table></figure><p>&nbsp;</p><h2 id='项目'><span>项目</span></h2><h3 id='玩android'><span>玩Android</span></h3><p><span>2021.12 - 至今</span><span>	</span><span>独立开发</span></p><p><span>Kotlin版的玩安卓项目APP，使用玩Android网站提供的API接口，集成了不少三方开源库，参考了三个玩安卓项目的UI，内置了很多工具类扩展函数及各式UI组件</span></p><ul><li><span>躺平、摆烂、摸鱼划水</span></li><li><span>写最少的代码，搞最多的BUG</span></li><li><span>解决不了BUG，就解决提出BUG的人</span></li></ul><p>&nbsp;</p><h3 id='人脸识别'><span>人脸识别</span></h3><p><span>2021.08 - 2021.10</span><span>	</span><span>安卓开发</span></p><p><span>基于旷视人脸识别算法做的人脸识别程序，用作智慧园区、智慧停车等终端</span></p><ul><li><span>负责提BUG，搞UI</span></li><li><span>优化屎山代码</span></li></ul><p>&nbsp;</p><h3 id='太阳纸业设备管理平台'><span>太阳纸业_设备管理平台</span></h3><p><span>2021.03 - 2021.07</span><span>	</span><span>安卓开发</span></p><p><span>定制化设备管理平台</span></p><ul><li><span>用户体验分析师</span></li><li><span>研究怎样能让UI更丑一点，代码更屎一点，顺便使用接口跟框架自己写了一版</span></li></ul><p>&nbsp;</p><h3 id='鲁南中联水泥设备管理平台'><span>鲁南中联水泥_设备管理平台</span></h3><p><span>2021.01 - 2021.07</span><span>	</span><span>安卓开发助理</span></p><p><span>设备管理平台初版，和平台数据交互的数据可视化软件</span></p><ul><li><span>负责提BUG，写BUG，怼APP开发经理</span></li><li><span>聊天打屁、吃吃喝喝</span></li></ul><p>&nbsp;</p><h2 id='评价'><span>评价</span></h2><ul><li><span>注重代码可读性/耦合度/规范性</span></li><li><span>注重代码的注释</span></li><li><span>UI审美独特</span></li><li><span>保持高质量代码和提交记录</span></li><li><span>热爱技术和代码</span></li><li><span>熟悉团队协作</span></li><li><span>结合实际需求思考技术选型</span></li></ul><p>&nbsp;</p><h2 id='开源网站'><span>开源网站</span></h2><ul><li><a href='https://github.com/SaltedFish-Extreme'><span>GITHUB</span></a></li><li><a href='https://gitee.com/SaltedFish-Extreme'><span>GITEE</span></a></li></ul><p>&nbsp;</p><h2 id='联系方式'><span>联系方式</span></h2><ul><li><span>QQ：1738099872</span></li><li><span>微信：同上</span></li><li><span>电话：见BOSS直拒</span></li></ul></div></div>
+<div id='write'  class=''><h1 id='菜鸡android开发攻城狮'><span>菜鸡Android开发攻城狮</span></h1><h2 id='介绍'><span>介绍</span></h2><figure><table><thead><tr><th><span>姓名</span></th><th><span>咸鱼至尊</span></th></tr></thead><tbody><tr><td><span>年龄</span></td><td><span>23</span></td></tr><tr><td><span>工作年限</span></td><td><span>2</span></td></tr><tr><td><span>婚姻状况</span></td><td><span>单身</span></td></tr><tr><td><span>所在城市</span></td><td><span>山东青岛</span></td></tr><tr><td><span>期望薪资</span></td><td><span>1-1.5W</span></td></tr><tr><td><span>擅长领域</span></td><td><strong><span>吹逼/斗图</span></strong><span> </span><strong><span>写BUG/找BUG</span></strong><span> </span><strong><span>Ctrl+C/Ctrl+V</span></strong></td></tr><tr><td><span>资产情况</span></td><td><em><strong><span>三房一车(总资产1KW)</span></strong></em></td></tr></tbody></table></figure><p>&nbsp;</p><h2 id='教育'><span>教育</span></h2><p><span>2018 - 2020    潍坊职业学院    大专</span></p><p>&nbsp;</p><h2 id='技能点'><span>技能点</span></h2><ul><li><span>熟悉Java/Kotlin</span></li><li><span>熟练使用Android Studio</span></li><li><span>熟悉MVP/MVVM代码结构</span></li><li><span>熟悉三方库/UI组件</span></li><li><span>擅长UI组件的复制粘贴</span></li><li><span>擅长代码的复制粘贴/东拼西凑</span></li><li><span>熟练使用Windows10</span></li><li><span>长期写辣鸡代码以及冗余注释</span></li></ul><p>&nbsp;</p><h2 id='成就'><span>成就</span></h2><p><span>中级CV攻城狮</span></p><p><span>吹水龙王🐉</span></p><p>&nbsp;</p><h2 id='名言'><span>名言</span></h2><p><span>天下辣鸡代码共一石，我独占八斗</span></p><p><span>不写注释的不叫程序猿，叫码农</span></p><p><span>世上无难事，只要肯放弃</span></p><p><span>空谈误国，实干兴邦</span></p><p><span>屁话少说，放🐎过来</span></p><p>&nbsp;</p><h2 id='公司'><span>公司</span></h2><figure><table><thead><tr><th><span>时间</span></th><th><span>公司名称</span></th><th><span>职位</span></th></tr></thead><tbody><tr><td><span>2023</span><span>.</span><span>02 - 至今</span></td><td><span>上海贝业新兄弟</span></td><td><span>安卓开发</span></td></tr><tr><td><span>2022</span><span>.</span><span>10 - 2022.12</span></td><td><span>青岛信熙软件有限公司</span></td><td><span>安卓开发</span></td></tr><tr><td><span>2022</span><span>.</span><span>07 - 2022.09</span></td><td><span>海信网络科技有限公司</span></td><td><span>安卓开发</span></td></tr><tr><td><span>2022</span><span>.</span><span>04 - 2022.06</span></td><td><span>青岛英泰信息技术有限公司</span></td><td><span>安卓开发</span></td></tr><tr><td><span>2021</span><span>.</span><span>08 - 2021.10</span></td><td><span>青岛通软网络科技有限公司</span></td><td><span>安卓开发</span></td></tr><tr><td><span>2020</span><span>.</span><span>10 - 2021.07</span></td><td><span>康吉诺(青岛)工业设备研究院</span></td><td><span>安卓开发</span></td></tr></tbody></table></figure><p>&nbsp;</p><h2 id='项目'><span>项目</span></h2><h3 id='开口笑'><span>开口笑</span></h3><p><span>2023.03 - 至今</span><span>	</span><span>独立开发</span></p><p><span>使用段子乐接口开发的仿内涵段子的开口笑APP，使用一些新技术，以学习巩固知识，提升能力为目的开发的APP</span></p><ul><li><span>两杯白开一包零食，一个UI调一天</span></li><li><span>代码是写不完的，能写多少算多少</span></li></ul><h3 id='玩android'><span>玩Android</span></h3><p><span>2021.12 - 至今</span><span>	</span><span>独立开发</span></p><p><span>Kotlin版的玩安卓项目APP，使用玩Android网站提供的接口，使用了很多技术，参考了各位大佬的项目，集成了很多优秀的开源库和工具类及各式UI组件的项目</span></p><ul><li><span>躺平、摆烂、摸鱼划水</span></li><li><span>写最少的代码，搞最多的BUG</span></li><li><span>解决不了BUG，那就不解决了</span></li></ul><h3 id='贝业wms'><span>贝业WMS</span></h3><p><span>2023.02 - 至今</span><span>	</span><span>安卓开发</span></p><p><span>WMS管理软件，和扫码枪配合使用的仓储管理软件</span></p><ul><li><span>几年前的老项目，java屎山，没架构，没技术，一边继续用java维护，一边用kotlin开发新功能(直接support-&gt;androidx,sdk和gradle升级到最新版😎)</span></li><li><span>工作性价比2.0，爽到爆，偶尔接个需求写个功能，基本上都是在干自己的事😆</span></li></ul><h3 id='天津轨道运营智能检修平台北京轨道运营智能管控平台'><span>天津轨道运营智能检修平台&amp;北京轨道运营智能管控平台</span></h3><p><span>2022.10 - 2022.12</span><span>	</span><span>安卓开发</span></p><p><span>天津和北京的地铁轨道管理软件，配合网页端使用</span></p><ul><li><span>中车外包，按时上下班，摸鱼划水吃饭溜达，偶尔改个BUG写个新需求</span></li><li><span>三个外包公司一台戏，协同(个人)开发，纯java项目，(我)掺了点kotlin进去</span><del><span>（没错，就是故意的😁）</span></del></li></ul><h3 id='亲情陪伴app'><span>亲情陪伴APP</span></h3><p><span>2022.07 - 2022.09</span><span>	</span><span>安卓开发</span></p><p><span>基于标贝语音交互SDK开发的一款听爸妈讲故事的应用，包括大脑(电视)端以及手机端</span></p><ul><li><span>海信外包，按时下班，一月迟到18次，园区食堂吃午饭，跟开发组长对着干</span></li><li><span>完全用kotlin做的第一个手机&amp;电视项目</span></li></ul><h3 id='ds30单机版app'><span>DS30单机版APP</span></h3><p><span>2022.04 - 2022.06</span><span>	</span><span>安卓开发</span></p><p><span>章盾台式印章机APP，用来管理使用印章机及印章</span></p><ul><li><span>根据联机版部分功能开发单机版软件，搞UI写页面，完善功能逻辑</span></li><li><span>吹逼聊天，喝水溜达，用模具冻茶水冰棒吃</span></li><li><span>用kotlin&amp;java做的第一个已上线的公司项目</span></li></ul><h3 id='人脸识别app'><span>人脸识别APP</span></h3><p><span>2021.08 - 2021.10</span><span>	</span><span>安卓开发</span></p><p><span>基于旷视人脸识别算法做的人脸识别程序，用作智慧园区、智慧停车等终端</span></p><ul><li><span>负责提BUG，搞UI</span></li><li><span>优化屎山代码</span></li></ul><h3 id='太阳纸业设备管理平台'><span>太阳纸业_设备管理平台</span></h3><p><span>2021.03 - 2021.07</span><span>	</span><span>安卓开发</span></p><p><span>定制化设备管理平台</span></p><ul><li><span>用户体验分析师</span></li><li><span>研究怎样能让UI更丑一点，代码更屎一点</span></li><li><span>顺便使用接口跟框架自己写了一版</span></li></ul><h3 id='鲁南中联水泥设备管理平台'><span>鲁南中联水泥</span><span>_</span><span>设备管理平台</span></h3><p><span>2021.03 - 2021.07</span><span>	</span><span>安卓开发助理</span></p><p><span>设备管理平台初版，和平台数据交互的数据可视化软件</span></p><ul><li><span>负责提BUG，写BUG，怼APP开发经理</span></li><li><span>聊天打屁、吃吃喝喝</span></li></ul><p>&nbsp;</p><h2 id='评价'><span>评价</span></h2><ul><li><span>注重代码可读性/耦合度/规范性</span></li><li><span>注重代码的注释</span></li><li><span>UI审美独特</span></li><li><span>保持高质量代码和提交记录</span></li><li><span>热爱技术和代码</span></li><li><span>熟悉团队协作</span></li><li><span>结合实际需求思考技术选型</span></li></ul><p>&nbsp;</p><h2 id='开源网站'><span>开源网站</span></h2><ul><li><a href='https://github.com/SaltedFish-Extreme'><span>GITHUB</span></a></li><li><a href='https://gitee.com/SaltedFish-Extreme'><span>GITEE</span></a></li></ul><p>&nbsp;</p><h2 id='联系方式'><span>联系方式</span></h2><ul><li><span>QQ：1738099872</span></li><li><span>微信：同上</span></li><li><span>电话：见BOSS直拒</span></li></ul><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p align="right"><small><a href="https://saltedfish-extreme.github.io/">我的主页</a></small></p><p>&nbsp;</p></div></div>
 </body>
 </html>
